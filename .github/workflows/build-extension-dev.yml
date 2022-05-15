@@ -60,7 +60,7 @@ jobs:
         npm install
         tsc
         cd ..
-        npx tfx-cli extension create --manifest-globs vss-extension-dev.json
+        tfx-cli extension create --manifest-globs vss-extension-dev.json
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
