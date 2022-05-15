@@ -1,0 +1,62 @@
+{
+    "manifestVersion": 1,
+    "id": "ARMTTKExtensionXPlatform",
+    "name": "Run ARM TTK Tests (Cross Platform) - Devlopment",
+    "version": "1.1.$buildnumber$",
+    "publisher": "Sam-Cogan",
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ], 
+    "repository": {
+		"type": "git",
+		"url": "https://github.com/sam-cogan/arm-ttk-extension-xplatform"
+	},
+	"content": {
+		"details": {
+			"path": "README.md"
+		},
+		"license": {
+			"path": "LICENSE"
+		}
+	},   
+    "tags": [
+		"Azure Pipelines",
+		"Azure",
+		"Azure Resource Manager",
+		"Tests"
+	],
+    "description": "Run Azure Resource Manager Template Test Kit tests as part of your build or release process",
+    "categories": [
+        "Azure Pipelines"
+    ],
+    "icons": {
+        "default": "icon.png"        
+    },
+    "files": [
+        {
+            "path": "arm-ttk-extension-xplatform"
+        }
+    ],
+    "links": {
+		"getstarted": {
+			"uri": "https://github.com/sam-cogan/arm-ttk-extension-xplatform/blob/master/README.md"
+		},
+		"support": {
+			"uri": "https://github.com/sam-cogan/arm-ttk-extension-xplatform/issues"
+		}
+	},
+    "contributions": [
+        {
+            "id": "RunARMTTKTestsXPlat",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "arm-ttk-extension-xplatform"
+            }
+        }
+    ]
+}
