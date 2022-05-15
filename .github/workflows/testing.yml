@@ -30,7 +30,7 @@ jobs:
     - name: Run Pester Tests
       run: invoke-pester Tests/invoke-ttk.Tests.ps1 -EnableExit
       shell: pwsh
-jobs:
+
   # This workflow contains a single job called "build"
   Test-Linux:
     # The type of runner that the job will run on
