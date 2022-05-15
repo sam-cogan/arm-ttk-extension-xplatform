@@ -96,7 +96,7 @@ export async function run() {
         });
     }
     catch (err) {
-        logError(err);
+        logError(err as string);
     }
 }
 
