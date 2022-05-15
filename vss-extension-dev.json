@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "ARMTTKExtensionXPlatform",
     "name": "Run ARM TTK Tests (Cross Platform) - Devlopment",
-    "version": "1.1.$buildnumber$",
+    "version": "1.0.$buildnumber$",
     "publisher": "Sam-Cogan",
     "targets": [
         {
