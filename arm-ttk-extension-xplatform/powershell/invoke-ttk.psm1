@@ -102,6 +102,8 @@ Function Invoke-TTK {
             chmod +x "$PSScriptRoot/bicep"
             }
             chmod +x "$PSScriptRoot/bicep"
+            ls $PSScriptRoot
+            which bicep
             & "$PSScriptRoot/bicep" --version
             & bicep --version
             foreach($bicepFile in $bicepFiles){
