@@ -39,6 +39,10 @@
             "path": "arm-ttk-extension-xplatform"
         }
     ],
+    "galleryFlags": [
+		"Public"
+	],
+
     "links": {
 		"getstarted": {
 			"uri": "https://github.com/sam-cogan/arm-ttk-extension-xplatform/blob/master/README.md"

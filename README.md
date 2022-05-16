@@ -35,6 +35,8 @@ You can also provide these optional parameters:
 4. A boolean to indicate whether to treat all templates as the "main template" for the purpose of tests that require this, such as the "Location must not be hardcoded" test - defaults to false
 5. A boolean to output additional test result summary to the Azure DevOps CLI - defaults to false
 6. A boolean to indicate whether we should recurse through subfolders to find files to test - defaults to true
+7. A boolean to indicate whether we should ignore the exit code of the tests, and so not fail the build on a failed test (advanced section)
+8. A boolean to indicate whether we should use PowerShell Core on Windows machines. On Linux, PowerShell core will always be used (advanced section)
 
 ```yaml
 - task: RunARMTTKTestsXPlat@1
@@ -47,6 +49,8 @@ You can also provide these optional parameters:
     allTemplatesMain: false
     cliOutputResults: true
     recurse: true
+    ignoreExitCode: false
+    usePSCore: true
 ```
 
 ### Test Results
