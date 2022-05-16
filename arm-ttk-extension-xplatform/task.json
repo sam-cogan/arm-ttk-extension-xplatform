@@ -2,7 +2,7 @@
     "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
     "id": "$taskid$",
     "name": "$taskname$",
-    "friendlyName": "Run Azure RM TTK Tests (Cross Platform)",
+    "friendlyName": "Run Azure RM TTK Tests (Cross Platform) $taskdisplayname$",
     "description": "Run Azure Resource Manager Template Test Kit Tests against ARM & Bicep Templates",
     "helpMarkDown": "[More Information](https://github.com/sam-cogan/arm-ttk-extension/blob/master/README.md)",
     "category": "Test",
@@ -10,9 +10,9 @@
     "runsOn": ["Agent", "DeploymentGroup"],
     "author": "Sam Cogan",
     "version": {
-        "Major": 0,
-        "Minor": 5,
-        "Patch": 0
+        "Major": 1,
+        "Minor": 0,
+        "Patch": 1
     },
     "instanceNameFormat": "Run Azure RM TTK Tests (Cross Platform)",
     "groups": [
