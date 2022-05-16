@@ -45,7 +45,7 @@ jobs:
       uses: datamonsters/replace-action@v2
       with:
         # Files, comma-separated. Supposed PLACEHOLDER in them
-        files: task/task.json
+        files: arm-ttk-extension-xplatform/task.json
         # Comma-separated pairs PLACEHOLDER=value
         replacements: $taskid$=cb27e003-8534-4da9-aaa0-35ca8756ae29, $taskname$=RunARMTTKTestsXPlat, $taskdisplayname$= 
     - name: create package
