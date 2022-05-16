@@ -102,7 +102,7 @@ Function Invoke-TTK {
             chmod +x "$PSScriptRoot/bicep"
             }
             $bicepCommand = "bicep"
-            if(Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null){
+            if((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null){
                 $bicepCommand = "$PSScriptRoot/bicep"
             }
             foreach($bicepFile in $bicepFiles){
