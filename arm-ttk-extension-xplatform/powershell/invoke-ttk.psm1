@@ -96,12 +96,14 @@ Function Invoke-TTK {
             }
         }
         if($isLinux){
-            if ((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot\bicep" -ErrorAction SilentlyContinue) -eq $null) {
+            if ((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot/bicep" -ErrorAction SilentlyContinue) -eq $null) {
             write-Host "Bicep Not Found, Downloading Bicep for Linux..."
             (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64", "$PSScriptRoot/bicep")
             chmod +x "$PSScriptRoot/bicep"
             }
             chmod +x "$PSScriptRoot/bicep"
+            & "$PSScriptRoot/bicep" --version
+            & bicep --version
             foreach($bicepFile in $bicepFiles){
                 write-host "building $bicepFile"
                 & "$PSScriptRoot/bicep" build $bicepFile
