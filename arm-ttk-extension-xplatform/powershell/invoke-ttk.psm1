@@ -88,24 +88,34 @@ Function Invoke-TTK {
     if($bicepFiles.count -gt 0){
         if($isWindows){
             if ((Get-Command "bicep.exe" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot\bicep.exe" -ErrorAction SilentlyContinue) -eq $null) {
-            write-Host "Bicep Not Found, Downloading..."
+            write-Host "Bicep Not Found, Downloading Bicep for Windows..."
             (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-win-x64.exe", "$PSScriptRoot\bicep.exe")
             }
+            $bicepCommand = "bicep.exe"
+            if((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null){
+                $bicepCommand = "$PSScriptRoot\bicep.exe"
+            }
             foreach($bicepFile in $bicepFiles){
-                & "$PSScriptRoot\bicep.exe" build $bicepFile
+                & $bicepCommand build $bicepFile
             }
         }
         if($isLinux){
-            if ((Get-Command "bicep.exe" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot\bicep" -ErrorAction SilentlyContinue) -eq $null) {
-            write-Host "Bicep Not Found, Downloading..."
+            if ((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot/bicep" -ErrorAction SilentlyContinue) -eq $null) {
+            write-Host "Bicep Not Found, Downloading Bicep for Linux..."
             (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64", "$PSScriptRoot/bicep")
+            chmod +x "$PSScriptRoot/bicep"
+            }
+            $bicepCommand = "bicep"
+            if((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null){
+                $bicepCommand = "$PSScriptRoot/bicep"
             }
             foreach($bicepFile in $bicepFiles){
-                & "$PSScriptRoot/bicep" build $bicepFile
+                write-host "building $bicepFile"
+                & $bicepCommand build $bicepFile
             }
         }
     }
-    
+
     if($recurse){
         $files = Get-ChildItem $templatelocation -include "*.json", "*.jsonc" -Recurse
     }
