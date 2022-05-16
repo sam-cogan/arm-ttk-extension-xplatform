@@ -86,15 +86,26 @@ Function Invoke-TTK {
     }
 
     if($bicepFiles.count -gt 0){
-        if ((Get-Command "bicep.exe" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot\bicep.exe" -ErrorAction SilentlyContinue) -eq $null) {
-        write-Host "Bicep Not Found, Downloading..."
-        (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-win-x64.exe", "$PSScriptRoot\bicep.exe")
+        if($isWindows){
+            if ((Get-Command "bicep.exe" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot\bicep.exe" -ErrorAction SilentlyContinue) -eq $null) {
+            write-Host "Bicep Not Found, Downloading..."
+            (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-win-x64.exe", "$PSScriptRoot\bicep.exe")
+            }
+            foreach($bicepFile in $bicepFiles){
+                & "$PSScriptRoot\bicep.exe" build $bicepFile
+            }
         }
-        foreach($bicepFile in $bicepFiles){
-            & "$PSScriptRoot\bicep.exe" build $bicepFile
+        if($isLinux){
+            if ((Get-Command "bicep.exe" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot\bicep" -ErrorAction SilentlyContinue) -eq $null) {
+            write-Host "Bicep Not Found, Downloading..."
+            (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64", "$PSScriptRoot/bicep")
+            }
+            foreach($bicepFile in $bicepFiles){
+                & "$PSScriptRoot/bicep" build $bicepFile
+            }
         }
     }
-
+    
     if($recurse){
         $files = Get-ChildItem $templatelocation -include "*.json", "*.jsonc" -Recurse
     }

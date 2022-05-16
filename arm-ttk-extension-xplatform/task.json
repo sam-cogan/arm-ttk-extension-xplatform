@@ -98,12 +98,12 @@
         "type": "boolean",
         "label": "Use PowerShell Core (Windows Only)",
         "required": false,
-        "helpMarkDown": "n a Windows agent, if set will run Pester tests with 'pwsh', if false will use 'PowerShell.exe'. On Non-Windows agents 'pwsh' always used",
+        "helpMarkDown": "On a Windows agent, if set will run Pester tests with 'pwsh', if false will use 'PowerShell.exe'. On Non-Windows agents 'pwsh' always used",
         "defaultValue": false,
         "groupName": "advanced"
       }
     ],
-    "execution": {    "id": "4486e733-cbc9-4dc6-a36f-9697c94e3ce0",
+    "execution": {   
         "Node10": {
             "target": "ttk.js"
         }
