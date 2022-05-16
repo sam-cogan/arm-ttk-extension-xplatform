@@ -91,8 +91,12 @@ Function Invoke-TTK {
             write-Host "Bicep Not Found, Downloading Bicep for Windows..."
             (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-win-x64.exe", "$PSScriptRoot\bicep.exe")
             }
+            $bicepCommand = "bicep.exe"
+            if((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null){
+                $bicepCommand = "$PSScriptRoot\bicep.exe"
+            }
             foreach($bicepFile in $bicepFiles){
-                & "$PSScriptRoot\bicep.exe" build $bicepFile
+                & $bicepCommand build $bicepFile
             }
         }
         if($isLinux){
