@@ -34,9 +34,10 @@ You can also provide these optional parameters:
 3. A comma separated list of files to treat as the "main template" for the purpose of tests that require this, such as the "Location must not be hardcoded" test.
 4. A boolean to indicate whether to treat all templates as the "main template" for the purpose of tests that require this, such as the "Location must not be hardcoded" test - defaults to false
 5. A boolean to output additional test result summary to the Azure DevOps CLI - defaults to false
+6. A boolean to indicate whether we should recurse through subfolders to find files to test - defaults to true
 
 ```yaml
-- task: RunARMTTKTests@1
+- task: RunARMTTKTestsXPlat@1
   inputs:
     templatelocation: '$(System.DefaultWorkingDirectory)\templates'
     resultLocation: '$(System.DefaultWorkingDirectory)\results'
@@ -45,6 +46,7 @@ You can also provide these optional parameters:
     mainTemplates: 'template1.json, template2.json'
     allTemplatesMain: false
     cliOutputResults: true
+    recurse: true
 ```
 
 ### Test Results
