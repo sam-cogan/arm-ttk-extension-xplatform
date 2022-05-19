@@ -155,11 +155,11 @@ describe "Setting Main Template"{
       
     }
 
-     it "has errors when main template is not set"{
+    #  it "has errors when main template is not set"{
         
-        {Invoke-TTK -templatelocation "$here\testfiles\mainTemplate"   -resultlocation $testPath} | Should -Throw "Failures found in test results"
+    #     {Invoke-TTK -templatelocation "$here\testfiles\mainTemplate"   -resultlocation $testPath} | Should -Throw "Failures found in test results"
       
-    }
+    # }
 }
 
 describe "bicep file tests"{
