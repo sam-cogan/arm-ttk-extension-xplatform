@@ -29,13 +29,13 @@ This extension expects two parameters
 
 You can also provide these optional parameters:
 
-1. A comma seperated list of test to run, if you provide this list then only the tests provided will be run, all other tests will be skipped. Leave blank to run all tests. If the test names are incorrect then all tests will run. The full list of test case names can be foun in the ARMTTK [here](https://github.com/Azure/arm-ttk/tree/master/arm-ttk/testcases/deploymentTemplate).
-2. A comma seperated list tests to skip, all other tests will be run. Leave blank to run all tests. The full list of test case names can be foun in the ARMTTK [here](https://github.com/Azure/arm-ttk/tree/master/arm-ttk/testcases/deploymentTemplate).
-3. A comma separated list of files to treat as the "main template" for the purpose of tests that require this, such as the "Location must not be hardcoded" test.
-4. A boolean to indicate whether to treat all templates as the "main template" for the purpose of tests that require this, such as the "Location must not be hardcoded" test - defaults to false
-5. A boolean to output additional test result summary to the Azure DevOps CLI - defaults to false
+1. A comma-separated list of tests to run, if you provide this list, only the tests provided will be run, and all other tests will be skipped. Leave blank to run all tests. If the test names are incorrect, then all tests will run. The complete list of test case names can be found in the ARMTTK [here](https://github.com/Azure/arm-ttk/tree/master/arm-ttk/testcases/deploymentTemplate).
+2. A comma-separated list of tests to skip, all other tests will be run. Leave blank to run all tests. The complete list of test case names can be found in the ARMTTK [here](https://github.com/Azure/arm-ttk/tree/master/arm-ttk/testcases/deploymentTemplate).
+3. A comma-separated list of files to treat as the "main template" for the purpose of tests that require this, such as the "Location must not be hardcoded" test.
+4. A boolean to indicate whether to treat all templates as the "main template" for the purpose of tests that require this, such as the "Location must not be hardcoded" test - defaults to false.
+5. A boolean to output additional test result summary to the Azure DevOps CLI - defaults to false.
 6. A boolean to indicate whether we should recurse through subfolders to find files to test - defaults to true
-7. A boolean to indicate whether we should ignore the exit code of the tests, and so not fail the build on a failed test (advanced section)
+7. A boolean to indicate whether we should ignore the exit code of the tests and so not fail the build on a failed test (advanced section)
 8. A boolean to indicate whether we should use PowerShell Core on Windows machines. On Linux, PowerShell core will always be used (advanced section)
 
 ```yaml
