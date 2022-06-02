@@ -13,9 +13,9 @@ export async function run() {
 
         let templatelocation = tl.getInput("templatelocation", true);
         let resultlocation = tl.getInput("resultlocation", true);
-        let testString = tl.getInput("testString");
-        let skipString = tl.getInput("skipString");
-        let mainTemplateString = tl.getInput("mainTemplateString");
+        let includeTests = tl.getInput("includeTests");
+        let skipTests = tl.getInput("skipTests");
+        let mainTemplates = tl.getInput("mainTemplates");
         let allTemplatesAreMain = tl.getBoolInput("allTemplatesAreMain");
         let cliOutputResults = tl.getBoolInput("cliOutputResults");
         let ignoreExitCode = tl.getBoolInput("ignoreExitCode");
@@ -49,19 +49,19 @@ export async function run() {
             args.push(resultlocation);
         }
 
-        if (testString) {
-            args.push("-testString");
-            args.push(testString);
+        if (includeTests) {
+            args.push("-includeTests");
+            args.push(includeTests);
         }
 
-        if (skipString) {
-            args.push("-skipString");
-            args.push(skipString);
+        if (skipTests) {
+            args.push("-skipTests");
+            args.push(skipTests);
         }
 
-        if (mainTemplateString) {
-            args.push("-mainTemplateString");
-            args.push(mainTemplateString);
+        if (mainTemplates) {
+            args.push("-mainTemplates");
+            args.push(mainTemplates);
         }
 
         if (allTemplatesAreMain) {

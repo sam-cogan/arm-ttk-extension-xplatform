@@ -35,7 +35,7 @@
         "type": "boolean",
         "label": "Recurse Template Location",
         "required": false,
-        "helpMarkDown": "Recurse through all folders undeneath template location",
+        "helpMarkDown": "Recurse through all folders underneath template location",
         "defaultValue": true
       },
       {
@@ -51,21 +51,21 @@
         "type": "string",
         "label": "Tests to Include",
         "required": false,
-        "helpMarkDown": "Comma seperated list of specific test to run, leave blank to run all tests."
+        "helpMarkDown": "Comma separated list of specific test to run, leave blank to run all tests."
       },
       {
         "name": "skipTests",
         "type": "string",
         "label": "Tests to Skip",
         "required": false,
-        "helpMarkDown": "Comma seperated list of specific test to skip, leave blank to run all tests."
+        "helpMarkDown": "Comma separated list of specific test to skip, leave blank to run all tests."
       },
       {
         "name": "mainTemplates",
         "type": "string",
         "label": "Main Templates List",
         "required": false,
-        "helpMarkDown": "Comma seperated list of templates to be marked as a 'main' template for the purposes of tests such as location hardcoding, leave blank to not mark any templates or rely on naming convention"
+        "helpMarkDown": "Comma separated list of templates to be marked as a 'main' template for the purposes of tests such as location hardcoding, leave blank to not mark any templates or rely on naming convention"
 
       },
       {

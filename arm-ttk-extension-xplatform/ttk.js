@@ -17,9 +17,9 @@ function run() {
         try {
             let templatelocation = tl.getInput("templatelocation", true);
             let resultlocation = tl.getInput("resultlocation", true);
-            let testString = tl.getInput("testString");
-            let skipString = tl.getInput("skipString");
-            let mainTemplateString = tl.getInput("mainTemplateString");
+            let includeTests = tl.getInput("includeTests");
+            let skipTests = tl.getInput("skipTests");
+            let mainTemplates = tl.getInput("mainTemplates");
             let allTemplatesAreMain = tl.getBoolInput("allTemplatesAreMain");
             let cliOutputResults = tl.getBoolInput("cliOutputResults");
             let ignoreExitCode = tl.getBoolInput("ignoreExitCode");
@@ -32,10 +32,10 @@ function run() {
                 if (!tl.getBoolInput("usePSCore")) {
                     executable = "powershell.exe";
                 }
-                agentSpecific_1.logInfo(`Using executable '${executable}'`);
+                (0, agentSpecific_1.logInfo)(`Using executable '${executable}'`);
             }
             else {
-                agentSpecific_1.logInfo(`Using executable '${executable}' as only only option on '${tl.getVariable("AGENT.OS")}'`);
+                (0, agentSpecific_1.logInfo)(`Using executable '${executable}' as only only option on '${tl.getVariable("AGENT.OS")}'`);
             }
             // we need to not pass the null param
             var args = [__dirname + "\\powershell\\ps-runner.ps1"];
@@ -47,17 +47,17 @@ function run() {
                 args.push("-resultlocation");
                 args.push(resultlocation);
             }
-            if (testString) {
-                args.push("-testString");
-                args.push(testString);
+            if (includeTests) {
+                args.push("-includeTests");
+                args.push(includeTests);
             }
-            if (skipString) {
-                args.push("-skipString");
-                args.push(skipString);
+            if (skipTests) {
+                args.push("-skipTests");
+                args.push(skipTests);
             }
-            if (mainTemplateString) {
-                args.push("-mainTemplateString");
-                args.push(mainTemplateString);
+            if (mainTemplates) {
+                args.push("-mainTemplates");
+                args.push(mainTemplates);
             }
             if (allTemplatesAreMain) {
                 args.push("-allTemplatesAreMain");
@@ -71,21 +71,21 @@ function run() {
             if (recurse) {
                 args.push("-recurse");
             }
-            agentSpecific_1.logInfo(`${executable} ${args.join(" ")}`);
+            (0, agentSpecific_1.logInfo)(`${executable} ${args.join(" ")}`);
             var spawn = require("child_process").spawn, child;
             child = spawn(executable, args);
             child.stdout.on("data", function (data) {
-                agentSpecific_1.logInfo(data.toString());
+                (0, agentSpecific_1.logInfo)(data.toString());
             });
             child.stderr.on("data", function (data) {
-                agentSpecific_1.logError(data.toString());
+                (0, agentSpecific_1.logError)(data.toString());
             });
             child.on("exit", function () {
-                agentSpecific_1.logInfo("Script finished");
+                (0, agentSpecific_1.logInfo)("Script finished");
             });
         }
         catch (err) {
-            agentSpecific_1.logError(err);
+            (0, agentSpecific_1.logError)(err);
         }
     });
 }

@@ -3,9 +3,9 @@
 Param(
     $templatelocation,
     $resultlocation,
-    $TestString,
-    $SkipString,
-    $mainTemplateString,
+    $IncludeTests,
+    $SkipTests,
+    $MainTemplates,
     [switch]$allTemplatesAreMain,
     [switch]$cliOutputResults,
     [switch]$ignoreExitCode,
@@ -16,22 +16,22 @@ Import-Module "$PSScriptRoot\..\arm-ttk\arm-ttk.psd1"
 Import-Module "$PSScriptRoot\Export-NUnitXml.psm1"
 Import-Module "$PSScriptRoot\invoke-ttk.psm1"
 
-if($TestString){
-    $Test=$TestString.split(',').trim()
+if($IncludeTests){
+    $Test=$IncludeTests.split(',').trim()
 }
 else{
     $Test =@()
 }
 
-if($SkipString){
-    $Skip=$SkipString.split(',').trim()
+if($SkipTests){
+    $Skip=$SkipTests.split(',').trim()
 }
 else{
     $Skip =@()
 }
 
-if($mainTemplateString){
-    $mainTemplates=$mainTemplateString.split(',').trim()
+if($MainTemplates){
+    $mainTemplates=$MainTemplates.split(',').trim()
 }
 else{
     $mainTemplates =@()
