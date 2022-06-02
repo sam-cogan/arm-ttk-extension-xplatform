@@ -1,11 +1,11 @@
 [CmdletBinding()] 
 [CmdletBinding()]
 Param(
-    $templatelocation,
-    $resultlocation,
-    $IncludeTests,
-    $SkipTests,
-    $MainTemplates,
+    $templateLocation,
+    $resultLocation,
+    $includeTests,
+    $skipTests,
+    $mainTemplates,
     [switch]$allTemplatesAreMain,
     [switch]$cliOutputResults,
     [switch]$ignoreExitCode,
@@ -17,25 +17,25 @@ Import-Module "$PSScriptRoot\Export-NUnitXml.psm1"
 Import-Module "$PSScriptRoot\invoke-ttk.psm1"
 
 if($IncludeTests){
-    $Test=$IncludeTests.split(',').trim()
+    $Test=$includeTests.split(',').trim()
 }
 else{
     $Test =@()
 }
 
 if($SkipTests){
-    $Skip=$SkipTests.split(',').trim()
+    $Skip=$skipTests.split(',').trim()
 }
 else{
     $Skip =@()
 }
 
 if($MainTemplates){
-    $mainTemplates=$MainTemplates.split(',').trim()
+    $Main=$mainTemplates.split(',').trim()
 }
 else{
-    $mainTemplates =@()
+    $Main =@()
 }
 
 
-Invoke-TTK -templatelocation $templatelocation  -resultlocation $resultlocation -Test $Test -Skip $Skip -mainTemplates $mainTemplates -allTemplatesAreMain $allTemplatesAreMain -cliOutputResults $cliOutputResults -ignoreExitCode $ignoreExitCode -recurse $recurse
+Invoke-TTK -templateLocation $templateLocation  -resultLocation $resultLocation -Test $Test -Skip $Skip -mainTemplates $Main -allTemplatesAreMain $allTemplatesAreMain -cliOutputResults $cliOutputResults -ignoreExitCode $ignoreExitCode -recurse $recurse
