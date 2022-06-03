@@ -11,11 +11,11 @@ export async function run() {
     try {
 
 
-        let templatelocation = tl.getInput("templatelocation", true);
-        let resultlocation = tl.getInput("resultlocation", true);
-        let testString = tl.getInput("testString");
-        let skipString = tl.getInput("skipString");
-        let mainTemplateString = tl.getInput("mainTemplateString");
+        let templateLocation = tl.getInput("templateLocation", true);
+        let resultLocation = tl.getInput("resultLocation", true);
+        let includeTests = tl.getInput("includeTests");
+        let skipTests = tl.getInput("skipTests");
+        let mainTemplates = tl.getInput("mainTemplates");
         let allTemplatesAreMain = tl.getBoolInput("allTemplatesAreMain");
         let cliOutputResults = tl.getBoolInput("cliOutputResults");
         let ignoreExitCode = tl.getBoolInput("ignoreExitCode");
@@ -24,7 +24,7 @@ export async function run() {
         // we need to get the verbose flag passed in as script flag
         var verbose = (tl.getVariable("System.Debug") === "true");
 
-        // find the executeable
+        // find the executable
         let executable = "pwsh";
         if (tl.getVariable("AGENT.OS") === "Windows_NT") {
             if (!tl.getBoolInput("usePSCore")) {
@@ -39,29 +39,29 @@ export async function run() {
         var args = [__dirname + "\\powershell\\ps-runner.ps1"];
 
 
-        if (templatelocation) {
-            args.push("-templatelocation");
-            args.push(templatelocation);
+        if (templateLocation) {
+            args.push("-templateLocation");
+            args.push(templateLocation);
         }
 
-        if (resultlocation) {
-            args.push("-resultlocation");
-            args.push(resultlocation);
+        if (resultLocation) {
+            args.push("-resultLocation");
+            args.push(resultLocation);
         }
 
-        if (testString) {
-            args.push("-testString");
-            args.push(testString);
+        if (includeTests) {
+            args.push("-includeTests");
+            args.push(includeTests);
         }
 
-        if (skipString) {
-            args.push("-skipString");
-            args.push(skipString);
+        if (skipTests) {
+            args.push("-skipTests");
+            args.push(skipTests);
         }
 
-        if (mainTemplateString) {
-            args.push("-mainTemplateString");
-            args.push(mainTemplateString);
+        if (mainTemplates) {
+            args.push("-mainTemplates");
+            args.push(mainTemplates);
         }
 
         if (allTemplatesAreMain) {
