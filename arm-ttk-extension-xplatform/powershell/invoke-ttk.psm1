@@ -114,6 +114,10 @@ Function Invoke-TTK {
                 & $bicepCommand build $bicepFile
             }
         }
+
+        if (!($item -is [System.IO.DirectoryInfo])) {
+            $templatelocation = $templatelocation.replace(".bicep",".json")
+        }
     }
 
     if($recurse){
