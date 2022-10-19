@@ -58,7 +58,7 @@ Function Invoke-TTK {
         [boolean]$ignoreExitCode = $false,
         # Whether to check all subfolders of template path for arm/bicep files
         # Defaults to true to preserve backwards compatability
-        [boolean]$recurse = $true
+        [boolean]$recurse = $true,
         [string] $subscriptionId,
         [string] $clientId,
         [string] $clientSecret,
