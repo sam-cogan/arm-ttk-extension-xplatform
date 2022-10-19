@@ -62,7 +62,7 @@ Function Invoke-TTK {
         [string] $subscriptionId,
         [string] $clientId,
         [string] $clientSecret,
-        [string] $tenantId,
+        [string] $tenantId
 
     )
 

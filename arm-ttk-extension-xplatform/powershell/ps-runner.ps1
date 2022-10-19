@@ -9,7 +9,11 @@ Param(
     [switch]$allTemplatesAreMain,
     [switch]$cliOutputResults,
     [switch]$ignoreExitCode,
-    [switch]$recurse
+    [switch]$recurse,
+    [string] $subscriptionId,
+    [string] $clientId,
+    [string] $clientSecret,
+    [string] $tenantId
 )
  
 Import-Module "$PSScriptRoot\..\arm-ttk\arm-ttk.psd1"
@@ -38,4 +42,4 @@ else{
 }
 
 
-Invoke-TTK -templateLocation $templateLocation  -resultLocation $resultLocation -Test $Test -Skip $Skip -mainTemplates $Main -allTemplatesAreMain $allTemplatesAreMain -cliOutputResults $cliOutputResults -ignoreExitCode $ignoreExitCode -recurse $recurse
+Invoke-TTK -templateLocation $templateLocation  -resultLocation $resultLocation -Test $Test -Skip $Skip -mainTemplates $Main -allTemplatesAreMain $allTemplatesAreMain -cliOutputResults $cliOutputResults -ignoreExitCode $ignoreExitCode -recurse $recurse -subscriptionId $subscriptionId -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId
