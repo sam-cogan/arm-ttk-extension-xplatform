@@ -59,10 +59,10 @@ Function Invoke-TTK {
         # Whether to check all subfolders of template path for arm/bicep files
         # Defaults to true to preserve backwards compatability
         [boolean]$recurse = $true
-        [string] subscriptionId,
-        [string] clientId,
-        [string] clientSecret,
-        [string] tenantId,
+        [string] $subscriptionId,
+        [string] $clientId,
+        [string] $clientSecret,
+        [string] $tenantId,
 
     )
 
