@@ -76,7 +76,7 @@ Function Invoke-TTK {
         # Login-AzAccount -Credential $cred -TenantId $tenantId -ServicePrincipal
         # Select-AzSubscription -subscriptionId $subscriptionId
 
-        az login --service-principal -u $clientId -p $clientSecret --tenant $tenantId
+        # az login --service-principal -u $clientId -p $clientSecret --tenant $tenantId
 
         $env:AZURE_CLIENT_ID = $clientId
         $env:AZURE_CLIENT_SECRET = $clientSecret
