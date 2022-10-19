@@ -87,9 +87,9 @@ export async function run() {
         if(azureServiceConnection !== undefined){
 
             let subscriptionId = tl.getEndpointDataParameter(azureServiceConnection, "SubscriptionId", true )
-            let clientId = tl.getEndpointDataParameter(azureServiceConnection, "serviceprincipalid", true )
-            let clientSecret = tl.getEndpointDataParameter(azureServiceConnection, "serviceprincipalkey", true )
-            let tenantId = tl.getEndpointDataParameter(azureServiceConnection, "tenantid", true )
+            let clientId = tl.getEndpointDataParameter(azureServiceConnection, "ServicePrincipalId", true )
+            let clientSecret = tl.getEndpointDataParameter(azureServiceConnection, "ServicePrincipalKey", true )
+            let tenantId = tl.getEndpointDataParameter(azureServiceConnection, "TenantId", true )
             
             if(subscriptionId !== undefined){
                 args.push("-subscriptionId");
