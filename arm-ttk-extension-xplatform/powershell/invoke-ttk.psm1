@@ -69,10 +69,15 @@ Function Invoke-TTK {
 
  
     if($subscriptionId -and $clientId -and $clientSecret -and $tenantId ){
-        $SecurePassword = $clientSecret | ConvertTo-SecureString -AsPlainText -Force
-        $cred = new-object -typename System.Management.Automation.PSCredential -argumentlist $clientID, $SecurePassword
-        Login-AzAccount -Credential $cred -TenantId $tenantId -ServicePrincipal
-        Select-AzSubscription -subscriptionId $subscriptionId
+        # $SecurePassword = $clientSecret | ConvertTo-SecureString -AsPlainText -Force
+        # $cred = new-object -typename System.Management.Automation.PSCredential -argumentlist $clientID, $SecurePassword
+        # Login-AzAccount -Credential $cred -TenantId $tenantId -ServicePrincipal
+        # Select-AzSubscription -subscriptionId $subscriptionId
+
+        $env:AZURE_CLIENT_ID = $clientId
+        $env:AZURE_CLIENT_SECRET = $clientSecret
+        $env:AZURE_TENANT_ID = $tenantId    
+        
     }
 
 
