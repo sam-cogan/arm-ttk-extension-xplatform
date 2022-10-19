@@ -65,7 +65,9 @@ Function Invoke-TTK {
         [string] $tenantId
 
     )
+    Get-ChildItem env:
 
+    Write-Host "$subscriptionId : $clientId :$clientSecret : $tenantId"
 
  
     if($subscriptionId -and $clientId -and $clientSecret -and $tenantId ){
