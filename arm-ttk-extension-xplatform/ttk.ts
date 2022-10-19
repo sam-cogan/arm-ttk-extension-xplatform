@@ -20,7 +20,9 @@ export async function run() {
         let cliOutputResults = tl.getBoolInput("cliOutputResults");
         let ignoreExitCode = tl.getBoolInput("ignoreExitCode");
         let recurse = tl.getBoolInput("recurse");
-       
+        let azureServiceConnection = tl.getInput("azureServiceConnection",false)
+
+    
         // we need to get the verbose flag passed in as script flag
         var verbose = (tl.getVariable("System.Debug") === "true");
 
@@ -79,6 +81,32 @@ export async function run() {
         }
         if (recurse) {
             args.push("-recurse");
+        }
+
+        
+        if(azureServiceConnection !== undefined){
+
+            let subscriptionId = tl.getEndpointDataParameter(azureServiceConnection, "SubscriptionId", true )
+            let clientId = tl.getEndpointDataParameter(azureServiceConnection, "serviceprincipalid", true )
+            let clientSecret = tl.getEndpointDataParameter(azureServiceConnection, "serviceprincipalkey", true )
+            let tenantId = tl.getEndpointDataParameter(azureServiceConnection, "tenantid", true )
+            
+            if(subscriptionId !== undefined){
+                args.push("-subscriptionId");
+                args.push(subscriptionId);
+            }
+            if(clientId  !== undefined){
+                args.push("-clientId");
+                args.push(clientId );
+            }
+            if(clientSecret !== undefined){
+                args.push("-clientSecret");
+                args.push(clientSecret);
+            }
+            if(tenantId !== undefined){
+                args.push("-tenantId");
+                args.push(tenantId);
+            }
         }
 
         logInfo(`${executable} ${args.join(" ")}`);

@@ -59,11 +59,21 @@ Function Invoke-TTK {
         # Whether to check all subfolders of template path for arm/bicep files
         # Defaults to true to preserve backwards compatability
         [boolean]$recurse = $true
+        [string] subscriptionId,
+        [string] clientId,
+        [string] clientSecret,
+        [string] tenantId,
 
     )
 
 
  
+    if($subscriptionId -and $clientId -and $clientSecret -and $tenantId ){
+        $SecurePassword = $clientSecret | ConvertTo-SecureString -AsPlainText -Force
+        $cred = new-object -typename System.Management.Automation.PSCredential -argumentlist $clientID, $SecurePassword
+        Login-AzAccount -Credential $cred -TenantId $tenantId -ServicePrincipal
+        Select-AzSubscription -subscriptionId $subscriptionId
+    }
 
 
     ### Test Paths
@@ -165,5 +175,7 @@ Function Invoke-TTK {
         
     }
     
-    
+    if($subscriptionId -and $clientId -and $clientSecret -and $tenantId ){
+        Disconnect-AzAccount
+    }
 }
