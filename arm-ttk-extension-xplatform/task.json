@@ -12,7 +12,7 @@
     "version": {
         "Major": 1,
         "Minor": 1,
-        "Patch": 9
+        "Patch": 10
     },
     "instanceNameFormat": "Run Azure RM TTK Tests (Cross Platform)",
     "groups": [
