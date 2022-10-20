@@ -11,8 +11,8 @@
     "author": "Sam Cogan",
     "version": {
         "Major": 1,
-        "Minor": 0,
-        "Patch": 11
+        "Minor": 1,
+        "Patch": 12
     },
     "instanceNameFormat": "Run Azure RM TTK Tests (Cross Platform)",
     "groups": [
@@ -100,6 +100,14 @@
         "required": false,
         "helpMarkDown": "On a Windows agent, if set will run Pester tests with 'pwsh', if false will use 'PowerShell.exe'. On Non-Windows agents 'pwsh' always used",
         "defaultValue": false,
+        "groupName": "advanced"
+      },
+      {
+        "name": "azureServiceConnection",
+        "type": "connectedService:AzureRM",
+        "label": "Azure Service Connection (optional)",
+        "required": false,
+        "helpMarkDown": "Optional service connection to connect to Azure before running tests. Only required if you need to connect to a Bicep Module repository or ARM Template Specs",
         "groupName": "advanced"
       }
     ],

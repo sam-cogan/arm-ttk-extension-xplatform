@@ -58,12 +58,18 @@ Function Invoke-TTK {
         [boolean]$ignoreExitCode = $false,
         # Whether to check all subfolders of template path for arm/bicep files
         # Defaults to true to preserve backwards compatability
-        [boolean]$recurse = $true
+        [boolean]$recurse = $true,
+        [string] $subscriptionId,
+        [string] $clientId,
+        [string] $clientSecret,
+        [string] $tenantId
 
     )
 
+    if($subscriptionId -and $clientId -and $clientSecret -and $tenantId ){
+        az login --service-principal -u $clientId -p $clientSecret --tenant $tenantId
 
- 
+    }
 
 
     ### Test Paths
@@ -165,5 +171,7 @@ Function Invoke-TTK {
         
     }
     
-    
+    if($subscriptionId -and $clientId -and $clientSecret -and $tenantId ){
+        az account clear
+    }
 }
