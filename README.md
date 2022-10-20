@@ -37,6 +37,7 @@ You can also provide these optional parameters:
 6. A boolean to indicate whether we should recurse through subfolders to find files to test - defaults to true
 7. A boolean to indicate whether we should ignore the exit code of the tests and so not fail the build on a failed test (advanced section)
 8. A boolean to indicate whether we should use PowerShell Core on Windows machines. On Linux, PowerShell core will always be used (advanced section)
+9. An Azure RM service connection providing credentials to connect to Azure for testing code that uses Bicep Module Registries or Template Specs
 
 ```yaml
 - task: RunARMTTKTestsXPlat@1
@@ -51,6 +52,7 @@ You can also provide these optional parameters:
     recurse: true
     ignoreExitCode: false
     usePSCore: true
+    azureServiceConnection: serviceConnectionName
 ```
 
 ### Test Results
