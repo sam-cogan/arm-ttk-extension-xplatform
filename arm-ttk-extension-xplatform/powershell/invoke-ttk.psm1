@@ -62,7 +62,8 @@ Function Invoke-TTK {
         [string] $subscriptionId,
         [string] $clientId,
         [string] $clientSecret,
-        [string] $tenantId
+        [string] $tenantId,
+        [boolean] $useAzBicep = $false
 
     )
 
@@ -92,35 +93,42 @@ Function Invoke-TTK {
     }
 
     if($bicepFiles.count -gt 0){
-        if($isWindows){
-            if ((Get-Command "bicep.exe" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot\bicep.exe" -ErrorAction SilentlyContinue) -eq $null) {
-            write-Host "Bicep Not Found, Downloading Bicep for Windows..."
-            (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-win-x64.exe", "$PSScriptRoot\bicep.exe")
-            }
-            $bicepCommand = "bicep.exe"
-            if((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null){
-                $bicepCommand = "$PSScriptRoot\bicep.exe"
-            }
-            foreach($bicepFile in $bicepFiles){
-                & $bicepCommand build $bicepFile
+        if($useAzBicep){
+            $bicepCommand = "az bicep"
+        }
+        else {
+            if($isWindows){
+                    if ((Get-Command "bicep.exe" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot\bicep.exe" -ErrorAction SilentlyContinue) -eq $null) {
+                    write-Host "Bicep Not Found, Downloading Bicep for Windows..."
+                    (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-win-x64.exe", "$PSScriptRoot\bicep.exe")
+                    }
+                    $bicepCommand = "bicep.exe"
+                    if((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null){
+                        $bicepCommand = "$PSScriptRoot\bicep.exe"
+                    }
+                }
+            if($isLinux){
+                if ((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot/bicep" -ErrorAction SilentlyContinue) -eq $null) {
+                write-Host "Bicep Not Found, Downloading Bicep for Linux..."
+                (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64", "$PSScriptRoot/bicep")
+                chmod +x "$PSScriptRoot/bicep"
+                }
+                $bicepCommand = "bicep"
+                if((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null){
+                    $bicepCommand = "$PSScriptRoot/bicep"
+                }
             }
         }
-        if($isLinux){
-            if ((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null -and (Get-Command "$PSScriptRoot/bicep" -ErrorAction SilentlyContinue) -eq $null) {
-            write-Host "Bicep Not Found, Downloading Bicep for Linux..."
-            (New-Object Net.WebClient).DownloadFile("https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64", "$PSScriptRoot/bicep")
-            chmod +x "$PSScriptRoot/bicep"
+ 
+        foreach($bicepFile in $bicepFiles){
+            if($useAzBicep){
+            $cmd = "$bicepCommand build --file $bicepFile"
             }
-            $bicepCommand = "bicep"
-            if((Get-Command "bicep" -ErrorAction SilentlyContinue) -eq $null){
-                $bicepCommand = "$PSScriptRoot/bicep"
+            else {
+                $cmd = "$bicepCommand build $bicepFile"
             }
-            foreach($bicepFile in $bicepFiles){
-                write-host "building $bicepFile"
-                & $bicepCommand build $bicepFile
-            }
+            invoke-expression $cmd
         }
-
         if (!($item -is [System.IO.DirectoryInfo])) {
             $templatelocation = $templatelocation.replace(".bicep",".json")
         }
