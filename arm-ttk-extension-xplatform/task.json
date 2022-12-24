@@ -11,8 +11,8 @@
     "author": "Sam Cogan",
     "version": {
         "Major": 1,
-        "Minor": 1,
-        "Patch": 13
+        "Minor": 2,
+        "Patch": 0
     },
     "instanceNameFormat": "Run Azure RM TTK Tests (Cross Platform)",
     "groups": [
@@ -99,6 +99,15 @@
         "label": "Use PowerShell Core (Windows Only)",
         "required": false,
         "helpMarkDown": "On a Windows agent, if set will run Pester tests with 'pwsh', if false will use 'PowerShell.exe'. On Non-Windows agents 'pwsh' always used",
+        "defaultValue": false,
+        "groupName": "advanced"
+      },
+      {
+        "name": "useAzBicep",
+        "type": "boolean",
+        "label": "Use Az CLI version of Bicep (az bicep)",
+        "required": false,
+        "helpMarkDown": "Use the Azure CLI version of Bicep for transpiling Bicep files (az bicep command). This requires the Azure CLI to be present on the machine and bicep installed using this CLI",
         "defaultValue": false,
         "groupName": "advanced"
       },

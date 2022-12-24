@@ -38,7 +38,7 @@ You can also provide these optional parameters:
 7. A boolean to indicate whether we should ignore the exit code of the tests and so not fail the build on a failed test (advanced section)
 8. A boolean to indicate whether we should use PowerShell Core on Windows machines. On Linux, PowerShell core will always be used (advanced section)
 9. An Azure RM service connection providing credentials to connect to Azure for testing code that uses Bicep Module Registries or Template Specs
-
+10. A boolean to indicate whether to use the Azure CLI version of bicep (Az Bicep) instead of the standard Bicep.exe. The Az CLI must be installed and the ```az bicep install``` command needs to be run prior to running tests, the extension will not install it for you. If you leave this set to false the extension will install Bicep.exe for you if needed.
 ```yaml
 - task: RunARMTTKTestsXPlat@1
   inputs:
@@ -53,6 +53,7 @@ You can also provide these optional parameters:
     ignoreExitCode: false
     usePSCore: true
     azureServiceConnection: serviceConnectionName
+    useAzBicep: false
 ```
 
 ### Test Results

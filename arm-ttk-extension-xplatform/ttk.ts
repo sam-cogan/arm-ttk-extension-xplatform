@@ -21,7 +21,7 @@ export async function run() {
         let ignoreExitCode = tl.getBoolInput("ignoreExitCode");
         let recurse = tl.getBoolInput("recurse");
         let azureServiceConnection = tl.getInput("azureServiceConnection",false)
-
+        let useAzBicep = tl.getBoolInput("useAzBicep")
     
         // we need to get the verbose flag passed in as script flag
         var verbose = (tl.getVariable("System.Debug") === "true");
@@ -82,6 +82,10 @@ export async function run() {
         if (recurse) {
             args.push("-recurse");
         }
+        if (useAzBicep) {
+            args.push("-useAzBicep");
+        }
+        
 
         
         if(azureServiceConnection !== undefined){
