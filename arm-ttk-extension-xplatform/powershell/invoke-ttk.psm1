@@ -11,10 +11,12 @@ function Test-FolderContents {
     
     #Path is always set to folder due to limitation of ARMTTK, filter then picks file(s) or full folder to test
     if ($mainTemplate) {
-        $results = Test-AzTemplate -TemplatePath "$folder\$filter" -Skip $Skip -Test $Test -mainTemplate $filter -ErrorAction  Continue
+        $results = Test-AzTemplate -TemplatePath "$folder" -file $filter -Skip $Skip -Test $Test -mainTemplateFile $filter -ErrorAction  Continue
     }
     else {
-        $results = Test-AzTemplate -TemplatePath "$folder\$filter" -Skip $Skip -Test $Test -ErrorAction Continue
+        
+        write-host "$results = Test-AzTemplate -TemplatePath `"$folder`" -file $filter -Skip $Skip -Test $Test -ErrorAction Continue"
+        $results = Test-AzTemplate -TemplatePath "$folder" -file $filter -Skip $Skip -Test $Test -ErrorAction Continue
     }
     if ($createResultsFiles) {
         Export-NUnitXml -TestResults $results -Path $resultlocation
