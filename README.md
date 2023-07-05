@@ -15,7 +15,7 @@ The ARM Template Tool Kit is a new static code analyser for ARM templates create
 - ID's are derived from resource ID's
 - Templates do not contain blanks
 
-For full details of the ARM TTK visit it's [Git repository](https://github.com/Azure/azure-quickstart-templates/tree/master/test/arm-ttk)
+For full details of the ARM TTK visit it's [Git repository](https://github.com/Azure/arm-ttk)
 
 ## ARM TTK Extension
 This extension provides an easy way to run the ARM TTK tests against your templates within Azure DevOps. You could run these tests when you update your template repository, create a pull request against your template repositor or when you are looking to run your templtes to create infrastructure.

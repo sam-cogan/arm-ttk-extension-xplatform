@@ -43,4 +43,4 @@ else{
 }
 
 
-Invoke-TTK -templateLocation $templateLocation  -resultLocation $resultLocation -Test $Test -Skip $Skip -mainTemplates $Main -allTemplatesAreMain $allTemplatesAreMain -cliOutputResults $cliOutputResults -ignoreExitCode $ignoreExitCode -recurse $recurse -subscriptionId $subscriptionId -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -useAzBicep $useAzBicep
+Invoke-TTK -templateLocation "$templateLocation"  -resultLocation "$resultLocation" -Test $Test -Skip $Skip -mainTemplates $Main -allTemplatesAreMain $allTemplatesAreMain -cliOutputResults $cliOutputResults -ignoreExitCode $ignoreExitCode -recurse $recurse -subscriptionId $subscriptionId -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -useAzBicep $useAzBicep
