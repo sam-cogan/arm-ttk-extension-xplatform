@@ -58,7 +58,7 @@ export async function run() {
 
         if (skipTests) {
             args.push("-skipTests");
-            args.push(skipTests);
+            args.push(`'${skipTests}'`);
         }
 
         if (mainTemplates) {
