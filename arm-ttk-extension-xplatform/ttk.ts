@@ -53,7 +53,7 @@ export async function run() {
 
         if (includeTests) {
             args.push("-includeTests");
-            args.push(includeTests);
+            args.push(`'${includeTests}'`);
         }
 
         if (skipTests) {
