@@ -53,12 +53,12 @@ export async function run() {
 
         if (includeTests) {
             args.push("-includeTests");
-            args.push(`'${includeTests}'`);
+            args.push(includeTests);
         }
 
         if (skipTests) {
             args.push("-skipTests");
-            args.push(`'${skipTests}'`);
+            args.push(skipTests);
         }
 
         if (mainTemplates) {
