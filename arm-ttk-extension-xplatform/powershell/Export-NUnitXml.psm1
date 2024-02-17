@@ -19,17 +19,17 @@ Function Export-NUnitXml {
     )
 
     #Validate
-    if(-not (Test-Path $Path)){
+    if (-not (Test-Path $Path)) {
         New-Item -ItemType Directory -Force -Path $path | Out-Null
     }
-    if((Get-Item $Path) -isnot [System.IO.DirectoryInfo]){
+    if ((Get-Item $Path) -isnot [System.IO.DirectoryInfo]) {
         throw "resultLocation must be a folder, not a file"
     }
     
     # Setup variables
     $TotalNumber = If ($TestResults) { $TestResults.Count -as [string] } Else { '1' }
     $FailedNumber = If ($TestResults) { $($TestResults.passed | Where-Object { $_ -eq $false }).count -as [string] } Else { '0' }
-    $TotalTime = [math]::Round($($TestResults.TimeSpan | measure-object -Property TotalSeconds -Sum).sum,4).toString()
+    $TotalTime = [math]::Round($($TestResults.TimeSpan | measure-object -Property TotalSeconds -Sum).sum, 4).toString()
     $Now = Get-Date
     $FormattedDate = Get-Date $Now -Format 'yyyy-MM-dd'
     $FormattedTime = Get-Date $Now -Format 'HH:mm:ss'
@@ -94,10 +94,26 @@ Function Export-NUnitXml {
             $TestCase = [string]::Empty
 
             if ($result.Passed) {
-                $TestCase = @"
+                if ($result.warnings.count -gt 0) {
+                    $TestCase = @"
+                    <test-case description="$($result.name) in template file $directoryName\$fileName" name="$($result.name) - $fileName" time="$([math]::Round($result.timespan.TotalSeconds,4).toString())" asserts="0" success="True" result="Success" executed="True">
+                        <assertions>
+                            <assertion result="warning">
+                                <message><![CDATA[$($result.warnings.message)]]> in template file $fileName</message>
+                            </assertion>
+                        </assertions>
+                    </test-case>`n
+                }
+"@
+                }
+                else {
+
+                    $TestCase = @"
     <test-case description="$($result.name) in template file $directoryName\$fileName" name="$($result.name) - $fileName" time="$([math]::Round($result.timespan.TotalSeconds,4).toString())" asserts="0" success="True" result="Success" executed="True">
     </test-case>`n
+                
 "@
+                }
             }
             else {
                 $stacktrace = [System.Security.SecurityElement]::Escape($result.Errors.ScriptStackTrace)
