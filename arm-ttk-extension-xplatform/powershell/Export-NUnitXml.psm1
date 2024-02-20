@@ -96,12 +96,10 @@ Function Export-NUnitXml {
             if ($result.Passed) {
                 if ($result.warnings.count -gt 0) {
                     $TestCase = @"
-                    <test-case description="$($result.name) in template file $directoryName\$fileName" name="$($result.name) - $fileName" time="$([math]::Round($result.timespan.TotalSeconds,4).toString())" asserts="$($result.warnings.count)" success="True" result="Inconclusive" executed="True">
-                        <assertions>
-                            <assertion result="Warning">
+                    <test-case description="$($result.name) in template file $directoryName\$fileName" name="$($result.name) - $fileName" time="$([math]::Round($result.timespan.TotalSeconds,4).toString())" asserts="0" success="True" result="Inconclusive" executed="True">
+                            <output>
                                 <message><![CDATA[$($result.warnings.message)]]> in template file $fileName</message>
-                            </assertion>
-                        </assertions>
+                            </output>
                     </test-case>`n
 "@
                 }
