@@ -98,7 +98,7 @@ Function Export-NUnitXml {
                     $TestCase = @"
                     <test-case description="$($result.name) in template file $directoryName\$fileName" name="$($result.name) - $fileName" time="$([math]::Round($result.timespan.TotalSeconds,4).toString())" asserts="$($result.warnings.count)" success="True" result="Success" executed="True">
                         <assertions>
-                            <assertion result="warning">
+                            <assertion result="Warning">
                                 <message><![CDATA[$($result.warnings.message)]]> in template file $fileName</message>
                             </assertion>
                         </assertions>
