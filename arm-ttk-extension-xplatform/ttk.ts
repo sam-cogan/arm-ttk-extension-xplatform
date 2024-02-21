@@ -22,6 +22,7 @@ export async function run() {
         let recurse = tl.getBoolInput("recurse");
         let azureServiceConnection = tl.getInput("azureServiceConnection",false)
         let useAzBicep = tl.getBoolInput("useAzBicep")
+        let treatWarningsAsErrors = tl.getBoolInput("treatWarningsAsErrors")
     
         // we need to get the verbose flag passed in as script flag
         var verbose = (tl.getVariable("System.Debug") === "true");
@@ -84,6 +85,9 @@ export async function run() {
         }
         if (useAzBicep) {
             args.push("-useAzBicep");
+        }
+        if (treatWarningsAsErrors) {
+            args.push("-warningsAsErrors");
         }
         
 

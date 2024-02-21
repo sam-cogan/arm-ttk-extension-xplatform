@@ -15,7 +15,8 @@ Function Export-NUnitXml {
         [psobject[]]$TestResults,
         # Path to store results
         [Parameter(Mandatory, Position = 1)]
-        [string]$Path
+        [string]$Path,
+        [boolean]$warningsAsErrors
     )
 
     #Validate
@@ -94,13 +95,14 @@ Function Export-NUnitXml {
             $TestCase = [string]::Empty
 
             if ($result.Passed) {
-                if ($result.warnings.count -gt 0) {
+                if ($result.warnings.count -gt 0 -and $warningsAsErrors) {
                     $TestCase = @"
-                    <test-case description="$($result.name) in template file $directoryName\$fileName" name="$($result.name) - $fileName" time="$([math]::Round($result.timespan.TotalSeconds,4).toString())" asserts="0" success="True" result="Inconclusive" executed="True">
-                                <failure>
-        <message>   <![CDATA[$($result.warnings.message)]]> in template file $fileName</message>
-e>
-    </failure>
+                    <test-case description="$($result.name) in template file $directoryName\$fileName" name="$($result.name) - $fileName" time="$([math]::Round($result.timespan.TotalSeconds,4).toString())" asserts="0" success="false" result="Failure" executed="True">
+                        <failure>
+                            <message>   
+                                <![CDATA[$($result.warnings.message)]]> warning in template file $fileName<
+                            /message>
+                        </failure>
                     </test-case>`n
 "@
                 }

@@ -6,7 +6,8 @@ function Test-FolderContents {
         [boolean]$createResultsFiles,
         [string[]]$Test,
         [string[]]$Skip,
-        [boolean]$mainTemplate
+        [boolean]$mainTemplate,
+        [boolean]$warningsAsErrors
     )
     
     #Path is always set to folder due to limitation of ARMTTK, filter then picks file(s) or full folder to test
@@ -17,7 +18,12 @@ function Test-FolderContents {
         $results = Test-AzTemplate -TemplatePath "$folder\$filter" -Skip $Skip -Test $Test -ErrorAction Continue
     }
     if ($createResultsFiles) {
-        Export-NUnitXml -TestResults $results -Path $resultlocation
+        if($warningsAsErrors){
+            Export-NUnitXml -TestResults $results -Path $folder -warningsAsErrors
+        }
+        else {
+            Export-NUnitXml -TestResults $results -Path $folder
+        }
     }
 
     if (!$results) { 
@@ -64,6 +70,7 @@ Function Invoke-TTK {
         [string] $clientSecret,
         [string] $tenantId,
         [boolean] $useAzBicep = $false
+        [boolean] $warningsAsErrors = $false
 
     )
 
@@ -156,7 +163,7 @@ Function Invoke-TTK {
         }
         #hack to skip this test temporarily, as it causes errors in PowerShell 5
         $skip = $skip += "Secure-Params-In-Nested-Deployments"
-        $failedTests = Test-FolderContents -folder $fileInfo.Directory.FullName -filter $fileInfo.Name -createResultsFiles $createResultsFiles -Test $Test -Skip $Skip -mainTemplate $mainTemplate
+        $failedTests = Test-FolderContents -folder $fileInfo.Directory.FullName -filter $fileInfo.Name -createResultsFiles $createResultsFiles -Test $Test -Skip $Skip -mainTemplate $mainTemplate -warningsAsErrors $warningsAsErrors 
         $FailedNumber += $failedTests
         if ($cliOutputResults) {
             if ($failedTests -gt 0) {
