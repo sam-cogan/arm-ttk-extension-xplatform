@@ -14,7 +14,7 @@ Param(
     [string] $clientId,
     [string] $clientSecret,
     [string] $tenantId,
-    [switch] $useAzBicep
+    [switch] $useAzBicep,
     [swtich] $warningsAsErrors
 )
  
