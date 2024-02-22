@@ -18,12 +18,9 @@ function Test-FolderContents {
         $results = Test-AzTemplate -TemplatePath "$folder\$filter" -Skip $Skip -Test $Test -ErrorAction Continue
     }
     if ($createResultsFiles) {
-        if($warningsAsErrors){
-            Export-NUnitXml -TestResults $results -Path $folder -warningsAsErrors
-        }
-        else {
-            Export-NUnitXml -TestResults $results -Path $folder
-        }
+        
+            Export-NUnitXml -TestResults $results -Path $folder -warningsAsErrors $warningsAsErrors
+      
     }
 
     if (!$results) { 
