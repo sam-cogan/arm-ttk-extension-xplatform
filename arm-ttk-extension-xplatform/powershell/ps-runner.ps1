@@ -15,7 +15,7 @@ Param(
     [string] $clientSecret,
     [string] $tenantId,
     [switch] $useAzBicep,
-    [swtich] $warningsAsErrors
+    [switch] $warningsAsErrors
 )
  
 Import-Module "$PSScriptRoot\..\arm-ttk\arm-ttk.psd1"
