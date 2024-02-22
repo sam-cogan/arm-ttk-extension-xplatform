@@ -69,7 +69,7 @@ Function Invoke-TTK {
         [string] $clientId,
         [string] $clientSecret,
         [string] $tenantId,
-        [boolean] $useAzBicep = $false
+        [boolean] $useAzBicep = $false,
         [boolean] $warningsAsErrors = $false
 
     )
