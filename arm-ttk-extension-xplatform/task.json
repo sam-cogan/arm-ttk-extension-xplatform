@@ -11,8 +11,8 @@
     "author": "Sam Cogan",
     "version": {
         "Major": 1,
-        "Minor": 2,
-        "Patch": 3
+        "Minor": 3,
+        "Patch": 1
     },
     "instanceNameFormat": "Run Azure RM TTK Tests (Cross Platform)",
     "groups": [
