@@ -7,7 +7,6 @@ resource sa 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   location: location
   sku: {
     name: 'Standard_LRS'
-    tier: 'Standard'
   }
   kind: 'StorageV2'
   properties: {
@@ -15,6 +14,12 @@ resource sa 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   }
 }
 
+resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2019-06-01' = {
+  name: 'default'
+  parent: sa
+}
+
 resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
-  name: '${sa.name}/default/${containerName}'
+  name: containerName
+  parent: blobService
 }
