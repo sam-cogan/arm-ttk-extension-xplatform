@@ -16,7 +16,8 @@ resource server 'Microsoft.Sql/servers@2019-06-01-preview' = {
 }
 
 resource sqlDB 'Microsoft.Sql/servers/databases@2020-08-01-preview' = {
-  name: '${server.name}/${sqlDBName}'
+  name: sqlDBName
+  parent: server
   location: location
   sku: {
     name: 'Standard'
