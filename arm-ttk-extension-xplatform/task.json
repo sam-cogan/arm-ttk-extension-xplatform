@@ -11,7 +11,7 @@
     "author": "Sam Cogan",
     "version": {
         "Major": 1,
-        "Minor": 3,
+        "Minor": 4,
         "Patch": 1
     },
     "instanceNameFormat": "Run Azure RM TTK Tests (Cross Platform)",
@@ -123,6 +123,9 @@
     "execution": {   
         "Node10": {
             "target": "ttk.js"
+        },
+        "Node20_1": {
+          "target": "ttk.js"
         }
     }
 }

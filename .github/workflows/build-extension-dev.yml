@@ -62,7 +62,7 @@ jobs:
         cd ..
         npx tfx-cli extension create --manifest-globs vss-extension-dev.json
     - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
+      uses: actions/upload-artifact@v4.0.0
       with:
         # Artifact name
         name: extension
@@ -72,7 +72,7 @@ jobs:
     needs: build
     steps:
     - name: Download artifact
-      uses: actions/download-artifact@v1.0.0
+      uses: actions/download-artifact@v4.0.0
       with:
         name: extension
     - name: run number with offset
@@ -82,5 +82,6 @@ jobs:
           echo "offset_build_number=$(($NUM+38))" >> $GITHUB_ENV
     - name: publish-extension
       run: |
-        npx tfx-cli extension publish --vsix extension/Sam-Cogan.ARMTTKExtensionXPlatform-Dev-1.0.${{env.offset_build_number}}.vsix --token ${{secrets.marketplace_pat}}
+        ls
+        npx tfx-cli extension publish --vsix Sam-Cogan.ARMTTKExtensionXPlatform-Dev-1.0.${{env.offset_build_number}}.vsix --token ${{secrets.marketplace_pat}}
         
