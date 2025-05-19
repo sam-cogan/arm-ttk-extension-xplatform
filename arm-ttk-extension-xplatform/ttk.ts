@@ -4,6 +4,7 @@ import tl = require("azure-pipelines-task-lib/task");
 import {
     logInfo,
     logError,
+    logWarning
 
 }  from "./agentSpecific";
 
@@ -121,7 +122,15 @@ export async function run() {
             logInfo(data.toString());
         });
         child.stderr.on("data", function (data: any) {
-            logError(data.toString());
+            const errorMessage = data.toString();
+            // Check if the error is a Bicep experimental feature warning
+            if (errorMessage.includes("WARNING: The following experimental Bicep features have been enabled")) {
+                // Log as warning instead of error
+                logWarning(errorMessage);
+            } else {
+                // Log other stderr output as errors
+                logError(errorMessage);
+            }
         });
         child.on("exit", function () {
             logInfo("Script finished");
