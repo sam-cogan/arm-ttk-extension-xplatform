@@ -81,15 +81,19 @@ The extension includes an automated GitHub Action workflow that updates the ARM 
 1. Runs automatically on a monthly schedule (1st of each month)
 2. Can be triggered manually via GitHub Actions
 3. Downloads the latest ARM TTK from the Azure/arm-ttk repository
-4. Updates the necessary files with customizations required for this extension
-5. Increments version numbers
-6. Creates a pull request for review
+4. Compares the new TTK files with the existing ones
+5. Only proceeds with updates if changes are detected
+6. Updates the necessary files with customizations required for this extension
+7. Increments version numbers
+8. Creates a pull request for review
+
+The workflow is smart enough to only create pull requests when actual changes to the TTK files are detected. This prevents unnecessary version updates when there haven't been any changes to the upstream ARM TTK repository.
 
 To manually trigger this update:
 1. Go to the Actions tab in the GitHub repository
 2. Select the "Update TTK Version" workflow
 3. Click "Run workflow" button
-4. Review and merge the created pull request after workflow completion
+4. If changes are detected, a pull request will be created for review and merge
 
 ## License
 
