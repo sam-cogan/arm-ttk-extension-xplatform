@@ -253,5 +253,5 @@ jobs:
             Changes to the TTK files were detected since the last update, requiring this version update.
             
             Please review and merge.
-          branch: auto-update-ttk
+          branch: auto-update-ttk-${{ github.run_id }}
           base: main
