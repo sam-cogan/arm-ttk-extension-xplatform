@@ -27,6 +27,26 @@ jobs:
           Write-Host "Downloaded latest ARM-TTK"
         shell: pwsh
 
+      # Create checksums of existing TTK files before updating
+      - name: Generate checksums of current files
+        id: current_checksums
+        run: |
+          $checksums = @{}
+          $ttkPath = "./arm-ttk-extension-xplatform/arm-ttk"
+          
+          if (Test-Path "$ttkPath/testcases") {
+            Get-ChildItem -Path "$ttkPath/testcases" -Recurse -File | ForEach-Object {
+              $fileHash = Get-FileHash -Path $_.FullName -Algorithm SHA256
+              $relativePath = $_.FullName.Replace("$ttkPath/testcases/", "")
+              $checksums[$relativePath] = $fileHash.Hash
+            }
+          }
+          
+          # Store checksums in a file
+          $checksums | ConvertTo-Json -Depth 10 | Set-Content -Path "/tmp/current_checksums.json"
+          Write-Host "Generated checksums of current TTK files"
+        shell: pwsh
+
       - name: Copy TTK files
         run: |
           $sourcePath = "/tmp/arm-ttk/arm-ttk-master/arm-ttk/testcases"
@@ -116,7 +136,63 @@ jobs:
           Write-Host "Updated Test-AzTemplate.ps1"
         shell: pwsh
 
+      # Generate checksums of new TTK files after updating
+      - name: Generate checksums of updated files
+        id: new_checksums
+        run: |
+          $checksums = @{}
+          $ttkPath = "./arm-ttk-extension-xplatform/arm-ttk"
+          
+          if (Test-Path "$ttkPath/testcases") {
+            Get-ChildItem -Path "$ttkPath/testcases" -Recurse -File | ForEach-Object {
+              $fileHash = Get-FileHash -Path $_.FullName -Algorithm SHA256
+              $relativePath = $_.FullName.Replace("$ttkPath/testcases/", "")
+              $checksums[$relativePath] = $fileHash.Hash
+            }
+          }
+          
+          # Store checksums in a file
+          $checksums | ConvertTo-Json -Depth 10 | Set-Content -Path "/tmp/new_checksums.json"
+          Write-Host "Generated checksums of updated TTK files"
+        shell: pwsh
+
+      # Check if there are changes between old and new TTK files
+      - name: Check for changes
+        id: check_changes
+        run: |
+          $currentChecksums = Get-Content -Path "/tmp/current_checksums.json" -Raw | ConvertFrom-Json -AsHashtable
+          $newChecksums = Get-Content -Path "/tmp/new_checksums.json" -Raw | ConvertFrom-Json -AsHashtable
+          
+          $hasChanges = $false
+          
+          # Check for new or modified files
+          foreach ($file in $newChecksums.Keys) {
+            if (-not $currentChecksums.ContainsKey($file) -or $currentChecksums[$file] -ne $newChecksums[$file]) {
+              $hasChanges = $true
+              Write-Host "Change detected in file: $file"
+            }
+          }
+          
+          # Check for deleted files
+          foreach ($file in $currentChecksums.Keys) {
+            if (-not $newChecksums.ContainsKey($file)) {
+              $hasChanges = $true
+              Write-Host "File removed: $file"
+            }
+          }
+          
+          if ($hasChanges) {
+            Write-Host "Changes detected in TTK files. Will proceed with PR creation."
+            echo "has_changes=true" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Host "No changes detected in TTK files. No PR will be created."
+            echo "has_changes=false" >> $env:GITHUB_OUTPUT
+          }
+        shell: pwsh
+
+      # Only update versions and create PR if changes were detected
       - name: Update version in task.json
+        if: steps.check_changes.outputs.has_changes == 'true'
         run: |
           $taskJsonPath = "./arm-ttk-extension-xplatform/task.json"
           $taskJson = Get-Content -Path $taskJsonPath -Raw | ConvertFrom-Json
@@ -134,6 +210,7 @@ jobs:
         shell: pwsh
 
       - name: Update arm-ttk.psd1
+        if: steps.check_changes.outputs.has_changes == 'true'
         run: |
           $psdPath = "./arm-ttk-extension-xplatform/arm-ttk/arm-ttk.psd1"
           $psdContent = Get-Content -Path $psdPath -Raw
@@ -163,6 +240,7 @@ jobs:
         shell: pwsh
 
       - name: Create Pull Request
+        if: steps.check_changes.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -176,6 +254,8 @@ jobs:
             - Ensured the necessary code modifications are in place
             - Incremented the minor version number in task.json
             - Incremented the minor version number in arm-ttk.psd1
+            
+            Changes to the TTK files were detected since the last update, requiring this version update.
             
             Please review and merge.
           branch: auto-update-ttk
