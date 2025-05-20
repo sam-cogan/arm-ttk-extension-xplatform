@@ -51,15 +51,25 @@ jobs:
       - name: Update Expand-AzTemplate.ps1
         run: |
           $filePath = "./arm-ttk-extension-xplatform/arm-ttk/Expand-AzTemplate.ps1"
-          $fileContent = Get-Content -Path $filePath -Raw
           
-          # Ensure line 'Where-Object { ... }' is commented out
-          $pattern = '(Get-ChildItem -Filter \*.json \|\n\s+)(?!\s*#)(Where-Object \{ .azuredeploy\.json., .mainTemplate\.json., .prereq\.azuredeploy\.json. -contains \$_\.Name \} \|)'
-          $replacement = '$1# $2'
+          # Read file line by line
+          $fileContent = Get-Content -Path $filePath
           
-          # Use regex with multiline support
-          $fileContent = $fileContent -replace $pattern, $replacement
+          # Find the specific line to comment out
+          for ($i = 0; $i -lt $fileContent.Count; $i++) {
+            if ($fileContent[$i] -match "Where-Object \{ 'azuredeploy\.json', 'mainTemplate\.json', 'prereq\.azuredeploy\.json' -contains") {
+              # Check if it's already commented
+              if ($fileContent[$i] -notmatch "^\s*#") {
+                # Comment out the line
+                $fileContent[$i] = "# " + $fileContent[$i]
+                Write-Host "Commented out line $i"
+              } else {
+                Write-Host "Line $i is already commented out"
+              }
+            }
+          }
           
+          # Write back to the file
           Set-Content -Path $filePath -Value $fileContent
           
           Write-Host "Updated Expand-AzTemplate.ps1"
@@ -68,15 +78,39 @@ jobs:
       - name: Update Test-AzTemplate.ps1
         run: |
           $filePath = "./arm-ttk-extension-xplatform/arm-ttk/Test-AzTemplate.ps1"
-          $fileContent = Get-Content -Path $filePath -Raw
           
-          # Ensure the filtering code is commented out
-          $pattern = '(Sort-Object Name -Descending)( \| # \(sort by name descending so that MainTemplate\.json comes first\)\.\n\s+)(Where-Object \{\n\s+.azureDeploy\.json., .mainTemplate\.json. -contains \$_\.Name\n\s+\}\))'
-          $replacement = '$1) # $2#$3'
+          # Read file line by line
+          $fileContent = Get-Content -Path $filePath
+          $inWhereObjectBlock = $false
+          $whereObjectStartLine = -1
           
-          # Use regex with multiline support
-          $fileContent = $fileContent -replace $pattern, $replacement
+          # Find the line with Sort-Object and check for a Where-Object block
+          for ($i = 0; $i -lt $fileContent.Count; $i++) {
+            if ($fileContent[$i] -match "Sort-Object Name -Descending \|") {
+              # Found the line with Sort-Object and a non-commented pipe
+              # Replace with parenthesis and comment out the pipe
+              $fileContent[$i] = $fileContent[$i] -replace "\|", ") #|"
+              $whereObjectStartLine = $i + 1
+              $inWhereObjectBlock = $true
+              Write-Host "Modified Sort-Object line $i"
+            }
+            
+            # If we're inside a Where-Object block that needs commenting out
+            if ($inWhereObjectBlock) {
+              # If the line doesn't already start with a comment and contains content
+              if ($fileContent[$i] -notmatch "^\s*#" -and $fileContent[$i].Trim() -ne "") {
+                $fileContent[$i] = "#" + $fileContent[$i]
+                Write-Host "Commented out line $i"
+              }
+              
+              # If we find a closing parenthesis, end the block
+              if ($fileContent[$i] -match "\)\)$") {
+                $inWhereObjectBlock = $false
+              }
+            }
+          }
           
+          # Write back to the file
           Set-Content -Path $filePath -Value $fileContent
           
           Write-Host "Updated Test-AzTemplate.ps1"
