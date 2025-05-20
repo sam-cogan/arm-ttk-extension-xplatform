@@ -1,0 +1,148 @@
+name: Update TTK Version
+
+on:
+  schedule:
+    # Run once a month on the 1st at midnight
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+    # Allow manual triggering
+
+jobs:
+  update-ttk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PowerShell
+        uses: actions/setup-powershell@v1
+        with:
+          powershell-version: '7.0'
+
+      - name: Download latest ARM-TTK
+        run: |
+          $latestTTK = "https://github.com/Azure/arm-ttk/archive/refs/heads/master.zip"
+          Invoke-WebRequest -Uri $latestTTK -OutFile "/tmp/arm-ttk.zip"
+          Expand-Archive -Path "/tmp/arm-ttk.zip" -DestinationPath "/tmp/arm-ttk" -Force
+          Write-Host "Downloaded latest ARM-TTK"
+        shell: pwsh
+
+      - name: Copy TTK files
+        run: |
+          $sourcePath = "/tmp/arm-ttk/arm-ttk-master/arm-ttk/testcases"
+          $destinationPath = "./arm-ttk-extension-xplatform/arm-ttk/testcases"
+          
+          Write-Host "Copying testcases from $sourcePath to $destinationPath"
+          
+          # Ensure destination directory exists
+          if (-not (Test-Path $destinationPath)) {
+            New-Item -Path $destinationPath -ItemType Directory -Force
+          } else {
+            # Clear existing test cases
+            Remove-Item -Path "$destinationPath/*" -Recurse -Force
+          }
+          
+          # Copy the test cases
+          Copy-Item -Path "$sourcePath/*" -Destination $destinationPath -Recurse -Force
+          
+          Write-Host "Successfully copied TTK testcases"
+        shell: pwsh
+
+      - name: Update Expand-AzTemplate.ps1
+        run: |
+          $filePath = "./arm-ttk-extension-xplatform/arm-ttk/Expand-AzTemplate.ps1"
+          $fileContent = Get-Content -Path $filePath -Raw
+          
+          # Ensure line 'Where-Object { ... }' is commented out
+          $pattern = '(Get-ChildItem -Filter \*.json \|\n\s+)(?!\s*#)(Where-Object \{ .azuredeploy\.json., .mainTemplate\.json., .prereq\.azuredeploy\.json. -contains \$_\.Name \} \|)'
+          $replacement = '$1# $2'
+          
+          # Use regex with multiline support
+          $fileContent = $fileContent -replace $pattern, $replacement
+          
+          Set-Content -Path $filePath -Value $fileContent
+          
+          Write-Host "Updated Expand-AzTemplate.ps1"
+        shell: pwsh
+        
+      - name: Update Test-AzTemplate.ps1
+        run: |
+          $filePath = "./arm-ttk-extension-xplatform/arm-ttk/Test-AzTemplate.ps1"
+          $fileContent = Get-Content -Path $filePath -Raw
+          
+          # Ensure the filtering code is commented out
+          $pattern = '(Sort-Object Name -Descending)( \| # \(sort by name descending so that MainTemplate\.json comes first\)\.\n\s+)(Where-Object \{\n\s+.azureDeploy\.json., .mainTemplate\.json. -contains \$_\.Name\n\s+\}\))'
+          $replacement = '$1) # $2#$3'
+          
+          # Use regex with multiline support
+          $fileContent = $fileContent -replace $pattern, $replacement
+          
+          Set-Content -Path $filePath -Value $fileContent
+          
+          Write-Host "Updated Test-AzTemplate.ps1"
+        shell: pwsh
+
+      - name: Update version in task.json
+        run: |
+          $taskJsonPath = "./arm-ttk-extension-xplatform/task.json"
+          $taskJson = Get-Content -Path $taskJsonPath -Raw | ConvertFrom-Json
+          
+          # Increment minor version number
+          $taskJson.version.Minor = $taskJson.version.Minor + 1
+          # Reset patch version to 0
+          $taskJson.version.Patch = 0
+          
+          # Save the updated task.json
+          $taskJson | ConvertTo-Json -Depth 10 | Set-Content -Path $taskJsonPath
+          
+          $newVersion = "$($taskJson.version.Major).$($taskJson.version.Minor).$($taskJson.version.Patch)"
+          Write-Host "Updated version to $newVersion"
+        shell: pwsh
+
+      - name: Update arm-ttk.psd1
+        run: |
+          $psdPath = "./arm-ttk-extension-xplatform/arm-ttk/arm-ttk.psd1"
+          $psdContent = Get-Content -Path $psdPath -Raw
+          
+          # Get current version
+          $pattern = 'ModuleVersion\s*=\s*(\d+\.\d+)'
+          $match = [regex]::Match($psdContent, $pattern)
+          if ($match.Success) {
+            $currentVersion = $match.Groups[1].Value
+            $versionParts = $currentVersion.Split('.')
+            $majorVersion = [int]$versionParts[0]
+            $minorVersion = [int]$versionParts[1]
+            
+            # Increment minor version
+            $minorVersion++
+            $newVersion = "$majorVersion.$minorVersion"
+            
+            # Update the version in the file
+            $newContent = $psdContent -replace $pattern, "ModuleVersion = $newVersion"
+            Set-Content -Path $psdPath -Value $newContent
+            
+            Write-Host "Updated arm-ttk.psd1 version to $newVersion"
+          } else {
+            Write-Host "Could not find version in arm-ttk.psd1"
+            exit 1
+          }
+        shell: pwsh
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update TTK to latest version"
+          title: "Update TTK to latest version"
+          body: |
+            This PR automatically updates the TTK to the latest version from the Azure/arm-ttk repository.
+            
+            The following changes were made:
+            - Updated test case files from master branch of Azure/arm-ttk
+            - Ensured the necessary code modifications are in place
+            - Incremented the minor version number in task.json
+            - Incremented the minor version number in arm-ttk.psd1
+            
+            Please review and merge.
+          branch: auto-update-ttk
+          base: main

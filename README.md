@@ -74,6 +74,23 @@ Once you do this, Azure DevOps will show the results of your tests in the build.
 ![Test Results](https://raw.githubusercontent.com/sam-cogan/arm-ttk-extension-xplatform/main/images/TestResults.png)
 
 
+## Updating ARM TTK Version
+
+The extension includes an automated GitHub Action workflow that updates the ARM TTK to the latest version from the original repository. This workflow:
+
+1. Runs automatically on a monthly schedule (1st of each month)
+2. Can be triggered manually via GitHub Actions
+3. Downloads the latest ARM TTK from the Azure/arm-ttk repository
+4. Updates the necessary files with customizations required for this extension
+5. Increments version numbers
+6. Creates a pull request for review
+
+To manually trigger this update:
+1. Go to the Actions tab in the GitHub repository
+2. Select the "Update TTK Version" workflow
+3. Click "Run workflow" button
+4. Review and merge the created pull request after workflow completion
+
 ## License
 
 This extension uses the [MIT License](LICENSE)
