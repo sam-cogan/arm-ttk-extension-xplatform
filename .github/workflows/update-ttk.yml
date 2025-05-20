@@ -1,0 +1,262 @@
+name: Update TTK Version
+
+on:
+  schedule:
+    # Run once a month on the 1st at midnight
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+    # Allow manual triggering
+
+jobs:
+  update-ttk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PowerShell
+        uses: actions/setup-powershell@v1
+        with:
+          powershell-version: '7.0'
+
+      - name: Download latest ARM-TTK
+        run: |
+          $latestTTK = "https://github.com/Azure/arm-ttk/archive/refs/heads/master.zip"
+          Invoke-WebRequest -Uri $latestTTK -OutFile "/tmp/arm-ttk.zip"
+          Expand-Archive -Path "/tmp/arm-ttk.zip" -DestinationPath "/tmp/arm-ttk" -Force
+          Write-Host "Downloaded latest ARM-TTK"
+        shell: pwsh
+
+      # Create checksums of existing TTK files before updating
+      - name: Generate checksums of current files
+        id: current_checksums
+        run: |
+          $checksums = @{}
+          $ttkPath = "./arm-ttk-extension-xplatform/arm-ttk"
+          
+          if (Test-Path "$ttkPath/testcases") {
+            Get-ChildItem -Path "$ttkPath/testcases" -Recurse -File | ForEach-Object {
+              $fileHash = Get-FileHash -Path $_.FullName -Algorithm SHA256
+              $relativePath = $_.FullName.Replace("$ttkPath/testcases/", "")
+              $checksums[$relativePath] = $fileHash.Hash
+            }
+          }
+          
+          # Store checksums in a file
+          $checksums | ConvertTo-Json -Depth 10 | Set-Content -Path "/tmp/current_checksums.json"
+          Write-Host "Generated checksums of current TTK files"
+        shell: pwsh
+
+      - name: Copy TTK files
+        run: |
+          $sourcePath = "/tmp/arm-ttk/arm-ttk-master/arm-ttk/testcases"
+          $destinationPath = "./arm-ttk-extension-xplatform/arm-ttk/testcases"
+          
+          Write-Host "Copying testcases from $sourcePath to $destinationPath"
+          
+          # Ensure destination directory exists
+          if (-not (Test-Path $destinationPath)) {
+            New-Item -Path $destinationPath -ItemType Directory -Force
+          } else {
+            # Clear existing test cases
+            Remove-Item -Path "$destinationPath/*" -Recurse -Force
+          }
+          
+          # Copy the test cases
+          Copy-Item -Path "$sourcePath/*" -Destination $destinationPath -Recurse -Force
+          
+          Write-Host "Successfully copied TTK testcases"
+        shell: pwsh
+
+      - name: Update Expand-AzTemplate.ps1
+        run: |
+          $filePath = "./arm-ttk-extension-xplatform/arm-ttk/Expand-AzTemplate.ps1"
+          
+          # Read file line by line
+          $fileContent = Get-Content -Path $filePath
+          
+          # Find the specific line to comment out
+          for ($i = 0; $i -lt $fileContent.Count; $i++) {
+            if ($fileContent[$i] -match "Where-Object \{ 'azuredeploy\.json', 'mainTemplate\.json', 'prereq\.azuredeploy\.json' -contains") {
+              # Check if it's already commented
+              if ($fileContent[$i] -notmatch "^\s*#") {
+                # Comment out the line
+                $fileContent[$i] = "# " + $fileContent[$i]
+                Write-Host "Commented out line $i"
+              } else {
+                Write-Host "Line $i is already commented out"
+              }
+            }
+          }
+          
+          # Write back to the file
+          Set-Content -Path $filePath -Value $fileContent
+          
+          Write-Host "Updated Expand-AzTemplate.ps1"
+        shell: pwsh
+        
+      - name: Update Test-AzTemplate.ps1
+        run: |
+          $filePath = "./arm-ttk-extension-xplatform/arm-ttk/Test-AzTemplate.ps1"
+          
+          # Read file line by line
+          $fileContent = Get-Content -Path $filePath
+          $inWhereObjectBlock = $false
+          $whereObjectStartLine = -1
+          
+          # Find the line with Sort-Object and check for a Where-Object block
+          for ($i = 0; $i -lt $fileContent.Count; $i++) {
+            if ($fileContent[$i] -match "Sort-Object Name -Descending \|") {
+              # Found the line with Sort-Object and a non-commented pipe
+              # Replace with parenthesis and comment out the pipe
+              $fileContent[$i] = $fileContent[$i] -replace "\|", ") #|"
+              $whereObjectStartLine = $i + 1
+              $inWhereObjectBlock = $true
+              Write-Host "Modified Sort-Object line $i"
+            }
+            
+            # If we're inside a Where-Object block that needs commenting out
+            if ($inWhereObjectBlock) {
+              # If the line doesn't already start with a comment and contains content
+              if ($fileContent[$i] -notmatch "^\s*#" -and $fileContent[$i].Trim() -ne "") {
+                $fileContent[$i] = "#" + $fileContent[$i]
+                Write-Host "Commented out line $i"
+              }
+              
+              # If we find a closing parenthesis, end the block
+              if ($fileContent[$i] -match "\)\)$") {
+                $inWhereObjectBlock = $false
+              }
+            }
+          }
+          
+          # Write back to the file
+          Set-Content -Path $filePath -Value $fileContent
+          
+          Write-Host "Updated Test-AzTemplate.ps1"
+        shell: pwsh
+
+      # Generate checksums of new TTK files after updating
+      - name: Generate checksums of updated files
+        id: new_checksums
+        run: |
+          $checksums = @{}
+          $ttkPath = "./arm-ttk-extension-xplatform/arm-ttk"
+          
+          if (Test-Path "$ttkPath/testcases") {
+            Get-ChildItem -Path "$ttkPath/testcases" -Recurse -File | ForEach-Object {
+              $fileHash = Get-FileHash -Path $_.FullName -Algorithm SHA256
+              $relativePath = $_.FullName.Replace("$ttkPath/testcases/", "")
+              $checksums[$relativePath] = $fileHash.Hash
+            }
+          }
+          
+          # Store checksums in a file
+          $checksums | ConvertTo-Json -Depth 10 | Set-Content -Path "/tmp/new_checksums.json"
+          Write-Host "Generated checksums of updated TTK files"
+        shell: pwsh
+
+      # Check if there are changes between old and new TTK files
+      - name: Check for changes
+        id: check_changes
+        run: |
+          $currentChecksums = Get-Content -Path "/tmp/current_checksums.json" -Raw | ConvertFrom-Json -AsHashtable
+          $newChecksums = Get-Content -Path "/tmp/new_checksums.json" -Raw | ConvertFrom-Json -AsHashtable
+          
+          $hasChanges = $false
+          
+          # Check for new or modified files
+          foreach ($file in $newChecksums.Keys) {
+            if (-not $currentChecksums.ContainsKey($file) -or $currentChecksums[$file] -ne $newChecksums[$file]) {
+              $hasChanges = $true
+              Write-Host "Change detected in file: $file"
+            }
+          }
+          
+          # Check for deleted files
+          foreach ($file in $currentChecksums.Keys) {
+            if (-not $newChecksums.ContainsKey($file)) {
+              $hasChanges = $true
+              Write-Host "File removed: $file"
+            }
+          }
+          
+          if ($hasChanges) {
+            Write-Host "Changes detected in TTK files. Will proceed with PR creation."
+            echo "has_changes=true" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Host "No changes detected in TTK files. No PR will be created."
+            echo "has_changes=false" >> $env:GITHUB_OUTPUT
+          }
+        shell: pwsh
+
+      # Only update versions and create PR if changes were detected
+      - name: Update version in task.json
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          $taskJsonPath = "./arm-ttk-extension-xplatform/task.json"
+          $taskJson = Get-Content -Path $taskJsonPath -Raw | ConvertFrom-Json
+          
+          # Increment minor version number
+          $taskJson.version.Minor = $taskJson.version.Minor + 1
+          # Reset patch version to 0
+          $taskJson.version.Patch = 0
+          
+          # Save the updated task.json
+          $taskJson | ConvertTo-Json -Depth 10 | Set-Content -Path $taskJsonPath
+          
+          $newVersion = "$($taskJson.version.Major).$($taskJson.version.Minor).$($taskJson.version.Patch)"
+          Write-Host "Updated version to $newVersion"
+        shell: pwsh
+
+      - name: Update arm-ttk.psd1
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          $psdPath = "./arm-ttk-extension-xplatform/arm-ttk/arm-ttk.psd1"
+          $psdContent = Get-Content -Path $psdPath -Raw
+          
+          # Get current version
+          $pattern = 'ModuleVersion\s*=\s*(\d+\.\d+)'
+          $match = [regex]::Match($psdContent, $pattern)
+          if ($match.Success) {
+            $currentVersion = $match.Groups[1].Value
+            $versionParts = $currentVersion.Split('.')
+            $majorVersion = [int]$versionParts[0]
+            $minorVersion = [int]$versionParts[1]
+            
+            # Increment minor version
+            $minorVersion++
+            $newVersion = "$majorVersion.$minorVersion"
+            
+            # Update the version in the file
+            $newContent = $psdContent -replace $pattern, "ModuleVersion = $newVersion"
+            Set-Content -Path $psdPath -Value $newContent
+            
+            Write-Host "Updated arm-ttk.psd1 version to $newVersion"
+          } else {
+            Write-Host "Could not find version in arm-ttk.psd1"
+            exit 1
+          }
+        shell: pwsh
+
+      - name: Create Pull Request
+        if: steps.check_changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update TTK to latest version"
+          title: "Update TTK to latest version"
+          body: |
+            This PR automatically updates the TTK to the latest version from the Azure/arm-ttk repository.
+            
+            The following changes were made:
+            - Updated test case files from master branch of Azure/arm-ttk
+            - Ensured the necessary code modifications are in place
+            - Incremented the minor version number in task.json
+            - Incremented the minor version number in arm-ttk.psd1
+            
+            Changes to the TTK files were detected since the last update, requiring this version update.
+            
+            Please review and merge.
+          branch: auto-update-ttk
+          base: main
