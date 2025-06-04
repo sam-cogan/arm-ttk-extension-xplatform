@@ -6,15 +6,16 @@ function Test-FolderContents {
         [boolean]$createResultsFiles,
         [string[]]$Test,
         [string[]]$Skip,
+        [hashtable]$SkipByFile,
         [boolean]$mainTemplate
     )
     
     #Path is always set to folder due to limitation of ARMTTK, filter then picks file(s) or full folder to test
     if ($mainTemplate) {
-        $results = Test-AzTemplate -TemplatePath "$folder\$filter" -Skip $Skip -Test $Test -mainTemplate $filter -ErrorAction  Continue
+        $results = Test-AzTemplate -TemplatePath "$folder\$filter" -Skip $Skip -Test $Test -SkipByFile $SkipByFile -mainTemplate $filter -ErrorAction  Continue
     }
     else {
-        $results = Test-AzTemplate -TemplatePath "$folder\$filter" -Skip $Skip -Test $Test -ErrorAction Continue
+        $results = Test-AzTemplate -TemplatePath "$folder\$filter" -Skip $Skip -Test $Test -SkipByFile $SkipByFile -ErrorAction Continue
     }
     if ($createResultsFiles) {
         Export-NUnitXml -TestResults $results -Path $resultlocation
@@ -48,6 +49,8 @@ Function Invoke-TTK {
         [string[]]$Test,
         # List of tests to skip
         [string[]]$Skip,
+        # Dictionary of file patterns to test patterns to skip
+        [hashtable]$SkipByFile,
         # List of files to treat as main templates
         [string[]]$MainTemplates,
         # treat all templates as main template
@@ -156,7 +159,7 @@ Function Invoke-TTK {
         }
         #hack to skip this test temporarily, as it causes errors in PowerShell 5
         $skip = $skip += "Secure-Params-In-Nested-Deployments"
-        $failedTests = Test-FolderContents -folder $fileInfo.Directory.FullName -filter $fileInfo.Name -createResultsFiles $createResultsFiles -Test $Test -Skip $Skip -mainTemplate $mainTemplate
+        $failedTests = Test-FolderContents -folder $fileInfo.Directory.FullName -filter $fileInfo.Name -createResultsFiles $createResultsFiles -Test $Test -Skip $Skip -SkipByFile $SkipByFile -mainTemplate $mainTemplate
         $FailedNumber += $failedTests
         if ($cliOutputResults) {
             if ($failedTests -gt 0) {
