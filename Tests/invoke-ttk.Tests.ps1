@@ -78,6 +78,27 @@ describe "Single File Tests" {
         
     }
 
+    it "should skip tests when the skipByFile value is provided" {
+        $hash = Get-FileHash -Path $goodFile -Algorithm MD5
+
+        # First run without skipping to get full count
+        Invoke-TTK -templatelocation $goodFile  -resultlocation $testPath -createResultsFiles $true 
+        [xml]$resultdoc = Get-Content "$testPath\$($(get-item $goodFile ).basename)-$($hash.Hash)-armttk.xml"
+        $testcases  = @($resultdoc."test-results"."test-suite".results."test-suite".results."test-case")
+        $fullCount = $testcases.Count 
+
+        # Then run with SkipByFile parameter - skip "VM Images" test for files matching "*good-test*"
+        $skipByFileParam = @{"*good-test*" = "*VM Images*"}
+        Invoke-TTK -templatelocation $goodFile  -resultlocation $testPath -createResultsFiles $true -SkipByFile $skipByFileParam
+        [xml]$resultdoc = Get-Content "$testPath\$($(get-item $goodFile ).basename)-$($hash.Hash)-armttk.xml"
+        $testcases  = @($resultdoc."test-results"."test-suite".results."test-suite".results."test-case")
+        $skipCount = $testcases.Count 
+
+        $skipCount | should -be ($fullCount - 1)
+        $testcases.name | should -Not -Contain "VM Images Should Use Latest Version - good-test.json"
+        
+    }
+
 }
 
 # describe "jsonc c test" {

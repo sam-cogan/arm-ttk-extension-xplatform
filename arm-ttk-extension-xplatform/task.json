@@ -68,6 +68,13 @@
       "helpMarkDown": "Comma separated list of specific test to skip, leave blank to run all tests."
     },
     {
+      "name": "skipTestsByFile",
+      "type": "string",
+      "label": "Skip Tests by File Pattern",
+      "required": false,
+      "helpMarkDown": "Specify tests to skip for specific file patterns. Format: 'filePattern1:testPattern1,filePattern2:testPattern2'. Example: '*azureDeploy*:*apiVersions*,*template*:*location*'"
+    },
+    {
       "name": "mainTemplates",
       "type": "string",
       "label": "Main Templates List",

@@ -31,7 +31,8 @@ You can also provide these optional parameters:
 
 1. A comma-separated list of tests to run, if you provide this list, only the tests provided will be run, and all other tests will be skipped. Leave blank to run all tests. If the test names are incorrect, then all tests will run. The complete list of test case names can be found in the ARMTTK [here](https://github.com/Azure/arm-ttk/tree/master/arm-ttk/testcases/deploymentTemplate).
 2. A comma-separated list of tests to skip, all other tests will be run. Leave blank to run all tests. The complete list of test case names can be found in the ARMTTK [here](https://github.com/Azure/arm-ttk/tree/master/arm-ttk/testcases/deploymentTemplate).
-3. A comma-separated list of files to treat as the "main template" for the purpose of tests that require this, such as the "Location must not be hardcoded" test.
+3. A string to specify tests to skip for specific file patterns. Use the format 'filePattern1:testPattern1,filePattern2:testPattern2'. For example: '*azureDeploy*:*apiVersions*,*template*:*location*' will skip tests matching '*apiVersions*' for files matching '*azureDeploy*' and skip tests matching '*location*' for files matching '*template*'.
+4. A comma-separated list of files to treat as the "main template" for the purpose of tests that require this, such as the "Location must not be hardcoded" test.
 4. A boolean to indicate whether to treat all templates as the "main template" for the purpose of tests that require this, such as the "Location must not be hardcoded" test - defaults to false.
 5. A boolean to output additional test result summary to the Azure DevOps CLI - defaults to false.
 6. A boolean to indicate whether we should recurse through subfolders to find files to test - defaults to true

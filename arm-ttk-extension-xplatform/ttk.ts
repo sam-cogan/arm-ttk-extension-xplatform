@@ -15,6 +15,7 @@ export async function run() {
         let resultLocation = tl.getInput("resultLocation", true);
         let includeTests = tl.getInput("includeTests");
         let skipTests = tl.getInput("skipTests");
+        let skipTestsByFile = tl.getInput("skipTestsByFile");
         let mainTemplates = tl.getInput("mainTemplates");
         let allTemplatesAreMain = tl.getBoolInput("allTemplatesAreMain");
         let cliOutputResults = tl.getBoolInput("cliOutputResults");
@@ -59,6 +60,11 @@ export async function run() {
         if (skipTests) {
             args.push("-skipTests");
             args.push(skipTests);
+        }
+
+        if (skipTestsByFile) {
+            args.push("-skipTestsByFile");
+            args.push(skipTestsByFile);
         }
 
         if (mainTemplates) {
